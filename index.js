@@ -8,11 +8,11 @@ valid = ['8ball', 'Random_hentai_gif', 'meow', 'erok', 'lizard', 'feetg', 'baka'
 client.on("message", async message => {
   if (!message.guild || message.author.bot) return;
   if (message.content.startsWith(prefix)) {
-    message.delete()
     let bonk = message.content.split(prefix)
     let args = bonk[1].split(" ");
     let command = args.shift().toLowerCase();
     if (command == 'neko') {
+      message.delete()
       if (message.channel.topic) {
         if (!message.channel.topic.includes('NSFW')) {
           if (!message.channel.nsfw) {
@@ -33,6 +33,17 @@ client.on("message", async message => {
         return;
       }
       
+      if (args[0] == 'help') {
+        let nembed = new discord.MessageEmbed()
+        .setTitle('Help Menu')
+        .setColor('RED')
+        .addField('Syntax', '&hentai [optional:args]')
+        .addField('Here are valid arguments', String(valid))
+        .setFooter('Requested by '+message.author.tag, message.author.displayAvatarURL({dynamic: true}));
+        message.channel.send(nembed)
+        return;
+      }
+      
       if (!args[0]) {
         args = ['neko']
       }
@@ -42,7 +53,7 @@ client.on("message", async message => {
           let nembed = new discord.MessageEmbed()
           .setTitle('Invalid argument')
           .setColor('RED')
-          .addField('Here are valid arguments', String(valid))
+          .addField('Use &hentai help','_ _')
           .setFooter('Requested by '+message.author.tag, message.author.displayAvatarURL({dynamic: true}));
           message.channel.send(nembed)
           return;
@@ -68,9 +79,9 @@ client.on("message", async message => {
 });
 
 client.on("ready", () => {
-client.user.setPresence({status: "dnd"})
-client.user.setActivity('imagine being horny smh', { type: 'PLAYING' });
-console.log('ready')
+  client.user.setActivity('imagine being horny smh', { type: 'PLAYING' });
+  client.user.setPresence({status: "dnd"});
+  console.log('ready');
 })
 
 
