@@ -117,8 +117,10 @@ client.on("message", async message => {
     }
 
 	if (command == 'status' || command == 'stat' || command == 'stats' || command == 'info') {
-		
-		console.log(process.memoryUsage())
+		let cpudata = 'erm'
+		si.cpu()
+    	.then(cpu => {
+		console.log(cpu)
 		let totalSeconds = (client.uptime / 1000);
         let days = Math.floor(totalSeconds / 86400);
         totalSeconds %= 86400;
@@ -135,15 +137,14 @@ client.on("message", async message => {
         let uptime = `${daysFinal}${hoursFinal}${minutesFinal}${seconds} seconds`;
         let embed = new Discord.MessageEmbed()
             .setColor("RANDOM")
+			.setTitle(`System & Process Information for ${client.user.username}`)
+			.setURL('https://discord.gg/YHnyVmKQwc')
             .setTimestamp()
             .setFooter('Requested by '+message.author.tag, message.author.displayAvatarURL({dynamic: true}))
-			.addField('Uptime', `${uptime}`)
-			.addField('Serving', `${client.guilds.cache.reduce((a, g) => a + g.memberCount, 0)} members`)
-			.addField(`Running`, `${process.release.name} ${process.version}`)
-			.addField(`Server Information`, `_Process info for this instance_`)
-			.addField(`System`,`${process.config.variables.host_arch} CPU \n${process.memoryUsage()}`)
-			let msg = await message.channel.send(`Info for ${client.user.username}`)
-			msg.edit(embed)
+			.addField('Process Information', `**Uptime** \n${uptime} \n**Serving** \n${client.guilds.cache.reduce((a, g) => a + g.memberCount, 0)} members \n**Running** \n${process.release.name} ${process.version}`)
+			.addField(`System Information`,`**CPU** \n${cpu.cores} core ${cpu.manufacturer} ${cpu.brand}@${cpu.speed}GHz ${process.config.variables.host_arch}`)
+		message.channel.send(embed)
+		})
 	}
   }
 });
