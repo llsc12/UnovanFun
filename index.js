@@ -1,4 +1,4 @@
-const discord = require("discord.js"), fs = require("fs"), Discord = require("discord.js");
+const discord = require("discord.js"), fs = require("fs"), Discord = require("discord.js"), si = require('systeminformation');
 const client = new Discord.Client({ 
   messageSweepInterval: 60, 
   disableEveryone: true, 
@@ -117,7 +117,8 @@ client.on("message", async message => {
     }
 
 	if (command == 'status' || command == 'stat' || command == 'stats' || command == 'info') {
-		console.log(process.cpuUsage())
+		
+		console.log(process.memoryUsage())
 		let totalSeconds = (client.uptime / 1000);
         let days = Math.floor(totalSeconds / 86400);
         totalSeconds %= 86400;
@@ -139,9 +140,10 @@ client.on("message", async message => {
 			.addField('Uptime', `${uptime}`)
 			.addField('Serving', `${client.guilds.cache.reduce((a, g) => a + g.memberCount, 0)} members`)
 			.addField(`Running`, `${process.release.name} ${process.version}`)
-			.addField(`Server Information`, `_ _`)
-			.addField(`System`,`${process.config.variables.host_arch} CPU. `)
-			message.channel.send(embed);
+			.addField(`Server Information`, `_Process info for this instance_`)
+			.addField(`System`,`${process.config.variables.host_arch} CPU \n${process.memoryUsage()}`)
+			let msg = await message.channel.send(`Info for ${client.user.username}`)
+			msg.edit(embed)
 	}
   }
 });
