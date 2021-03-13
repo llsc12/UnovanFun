@@ -30,6 +30,7 @@ client.on("message", async message => {
             let nembed = new discord.MessageEmbed()
             .addField('bruh, think about the children','If this was supposed to work, set channel to NSFW or include NSFW in channel topic')
             .setColor('GREEN')
+			.setTimestamp()
             .setFooter('Requested by '+message.author.tag, message.author.displayAvatarURL({dynamic: true}));
             message.channel.send(nembed)
             return;
@@ -39,6 +40,7 @@ client.on("message", async message => {
         let nembed = new discord.MessageEmbed()
         .addField('bruh, think about the children','If this was supposed to work, set channel to NSFW or include NSFW in channel topic')
         .setColor('GREEN')
+		.setTimestamp()
         .setFooter('Requested by '+message.author.tag, message.author.displayAvatarURL({dynamic: true}));
         message.channel.send(nembed)
         return;
@@ -50,6 +52,7 @@ client.on("message", async message => {
         .setColor('RED')
         .addField('Syntax', '&hentai [optional:args]')
         .addField('Here are valid arguments', String(valid))
+		.setTimestamp()
         .setFooter('Requested by '+message.author.tag, message.author.displayAvatarURL({dynamic: true}));
         message.channel.send(nembed)
         return;
@@ -65,6 +68,7 @@ client.on("message", async message => {
           .setTitle('Invalid argument')
           .setColor('RED')
           .addField('Use &hentai help','_ _')
+		  .setTimestamp()
           .setFooter('Requested by '+message.author.tag, message.author.displayAvatarURL({dynamic: true}));
           message.channel.send(nembed)
           return;
@@ -78,6 +82,7 @@ client.on("message", async message => {
           .setURL(json.url)
           .setImage(json.url)
           .setColor('BLUE')
+		  .setTimestamp()
           .setFooter('Requested by '+message.author.tag, message.author.displayAvatarURL({dynamic: true}));
           message.channel.send(nembed)
         });
@@ -88,27 +93,56 @@ client.on("message", async message => {
     }
 
     if (command == 'minesweeper' || command == 'ms') {
-        if (!args) {
-			message.channel.send(generateGame(5, 5, 4, message))
+        if (!args[0]) {
+			message.channel.send(generateGame())
 		} else if (args[0] == 'help') {
 			let msembed = new discord.MessageEmbed()
 			.setColor("YELLOW")
 			.setTitle("Minesweeper Help")
 			.addField('Syntax',`${prefix}minesweeper <x> <y> <bombs> [StartUncovered?]`)
-			.addField(`Arguments Descriptors`,"Here's what to put for custom playfields")
-			.addField('x', 'The horizontal field size')
-			.addField('y', 'The vertical field size')
-			.addField('bombs', 'Quantity of bombs to place on the field')
+			.addField(`Arguments Descriptors`,"Here's what to put for custom boards")
+			.addField('x', 'The horizontal board size')
+			.addField('y', 'The vertical board size')
+			.addField('bombs', 'Quantity of bombs to place on the board')
 			.addField('StartUncovered?', `Set to true if you want to have all 0's unhidden from the start`)
-			.addField('_ _',"Note: You can totally use &minesweeper on its own and it'll use default settings")
+			.addField('_ _',"Note: You can totally use &minesweeper on its own and it'll use default settings. You can also use &ms as a shortcut!")
+			.setTimestamp()
 			.setFooter('Requested by '+message.author.tag, message.author.displayAvatarURL({dynamic: true}));
 			message.channel.send(msembed)
 		} else if (args[0] && args[1] && args[2]) {
-			message.channel.send(generateGame(args[0], args[1], args[2], message))
+			message.channel.send(generateGame(args[0], args[1], args[2], message, args[3]))
 		} else {
 			message.channel.send(`Invalid command syntax, refer to &minesweeper help`)
 		}
     }
+
+	if (command == 'status' || command == 'stat' || command == 'stats' || command == 'info') {
+		console.log(process.cpuUsage())
+		let totalSeconds = (client.uptime / 1000);
+        let days = Math.floor(totalSeconds / 86400);
+        totalSeconds %= 86400;
+        let hours = Math.floor(totalSeconds / 3600);
+        totalSeconds %= 3600;
+        let minutes = Math.floor(totalSeconds / 60);
+        let seconds = Math.floor(totalSeconds % 60);
+        let daysText = (days == 1 ? "day" : "days");
+        let hoursText = (hours == 1 ? "hour" : "hours");
+        let minutesText = (minutes == 1 ? "minute" : "minutes");
+        let daysFinal = (days >= 1 ? days + " " + daysText + ", " : "");
+        let hoursFinal = (hours >= 1 ? hours + " " + hoursText + ", " : "");
+        let minutesFinal = (minutes >= 1 ? minutes + " " + minutesText + " and " : "");
+        let uptime = `${daysFinal}${hoursFinal}${minutesFinal}${seconds} seconds`;
+        let embed = new Discord.MessageEmbed()
+            .setColor("RANDOM")
+            .setTimestamp()
+            .setFooter('Requested by '+message.author.tag, message.author.displayAvatarURL({dynamic: true}))
+			.addField('Uptime', `${uptime}`)
+			.addField('Serving', `${client.guilds.cache.reduce((a, g) => a + g.memberCount, 0)} members`)
+			.addField(`Running`, `${process.release.name} ${process.version}`)
+			.addField(`Server Information`, `_ _`)
+			.addField(`System`,`${process.config.variables.host_arch} CPU. `)
+			message.channel.send(embed);
+	}
   }
 });
 
@@ -145,13 +179,13 @@ function generateGame(gameWidth, gameHeight, numMines, message, startsNotUncover
 	
 	// Check game size
 	if (isNaN(gameWidth)) {
-		gameWidth = 8;
+		gameWidth = 6;
 	}
 	else if (gameWidth <= 0 || gameHeight <= 0) {
 		return `Uh, I'm not smart enough to generate a maze sized ${gameWidth} by ${gameHeight}. I can only use positive numbers. Sorry :cry:`;
 	}
 	if (isNaN(gameHeight)) {
-		gameHeight = 8;
+		gameHeight = 6;
 	}
 	else if (gameWidth > 40 || gameHeight > 20) {
 		return "That's way too large! Think of all the mobile users who are going to see this!";
