@@ -152,8 +152,9 @@ client.on("message", async message => {
 });
 
 client.on('ready', () => {
+	console.log('online')
+  if (!client.user.username.includes('Unovan')) return;
   PingServer()
-  console.log('ready')
 });
 
 function PingServer() { // Ping server every 10 seconds
