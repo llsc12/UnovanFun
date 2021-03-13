@@ -117,33 +117,35 @@ client.on("message", async message => {
     }
 
 	if (command == 'status' || command == 'stat' || command == 'stats' || command == 'info') {
-		let cpudata = 'erm'
 		si.cpu()
     	.then(cpu => {
-		console.log(cpu)
-		let totalSeconds = (client.uptime / 1000);
-        let days = Math.floor(totalSeconds / 86400);
-        totalSeconds %= 86400;
-        let hours = Math.floor(totalSeconds / 3600);
-        totalSeconds %= 3600;
-        let minutes = Math.floor(totalSeconds / 60);
-        let seconds = Math.floor(totalSeconds % 60);
-        let daysText = (days == 1 ? "day" : "days");
-        let hoursText = (hours == 1 ? "hour" : "hours");
-        let minutesText = (minutes == 1 ? "minute" : "minutes");
-        let daysFinal = (days >= 1 ? days + " " + daysText + ", " : "");
-        let hoursFinal = (hours >= 1 ? hours + " " + hoursText + ", " : "");
-        let minutesFinal = (minutes >= 1 ? minutes + " " + minutesText + " and " : "");
-        let uptime = `${daysFinal}${hoursFinal}${minutesFinal}${seconds} seconds`;
-        let embed = new Discord.MessageEmbed()
-            .setColor("RANDOM")
-			.setTitle(`System & Process Information for ${client.user.username}`)
-			.setURL('https://discord.gg/YHnyVmKQwc')
-            .setTimestamp()
-            .setFooter('Requested by '+message.author.tag, message.author.displayAvatarURL({dynamic: true}))
-			.addField('Process Information', `**Uptime** \n${uptime} \n**Serving** \n${client.guilds.cache.reduce((a, g) => a + g.memberCount, 0)} members \n**Running** \n${process.release.name} ${process.version}`)
-			.addField(`System Information`,`**CPU** \n${cpu.cores} core ${cpu.manufacturer} ${cpu.brand}@${cpu.speed}GHz ${process.config.variables.host_arch}`)
-		message.channel.send(embed)
+			si.mem()
+			.then(mem => {
+			console.log(mem)
+			let totalSeconds = (client.uptime / 1000);
+			let days = Math.floor(totalSeconds / 86400);
+			totalSeconds %= 86400;
+			let hours = Math.floor(totalSeconds / 3600);
+			totalSeconds %= 3600;
+			let minutes = Math.floor(totalSeconds / 60);
+			let seconds = Math.floor(totalSeconds % 60);
+			let daysText = (days == 1 ? "day" : "days");
+			let hoursText = (hours == 1 ? "hour" : "hours");
+			let minutesText = (minutes == 1 ? "minute" : "minutes");
+			let daysFinal = (days >= 1 ? days + " " + daysText + ", " : "");
+			let hoursFinal = (hours >= 1 ? hours + " " + hoursText + ", " : "");
+			let minutesFinal = (minutes >= 1 ? minutes + " " + minutesText + " and " : "");
+			let uptime = `${daysFinal}${hoursFinal}${minutesFinal}${seconds} seconds`;
+			let embed = new Discord.MessageEmbed()
+				.setColor("RANDOM")
+				.setTitle(`System & Process Information for ${client.user.username}`)
+				.setURL('https://discord.gg/YHnyVmKQwc')
+				.setTimestamp()
+				.setFooter('Requested by '+message.author.tag, message.author.displayAvatarURL({dynamic: true}))
+				.addField('Process Information', `**Uptime** \n${uptime} \n**Serving** \n${client.guilds.cache.reduce((a, g) => a + g.memberCount, 0)} members \n**Running** \n${process.release.name} ${process.version}`)
+				.addField(`System Information`,`**CPU** \n${cpu.cores} Core ${cpu.manufacturer} ${cpu.brand}@${cpu.speed}GHz ${process.config.variables.host_arch} \n**Memory** \nTotal Memory: ${(mem.total/1000000000).toFixed(2)}GB \nUsed Memory: ${(mem.used/1000000000).toFixed(2)}GB \nFree Memory: ${(mem.free/1000000000).toFixed(2)}GB`)
+			message.channel.send(embed)
+			})
 		})
 	}
   }
