@@ -5,7 +5,7 @@ const client = new Discord.Client({
   presence: {
     status: 'dnd',
     activity: {
-      name: 'hentai lol',
+      name: 'loli futa hentai',
       type: 'WATCHING',
     },
   }
