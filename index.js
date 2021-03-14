@@ -117,7 +117,7 @@ client.on("message", async message => {
     }
 
 	if (command == 'status' || command == 'stat' || command == 'stats' || command == 'info') {
-		if (args[0] != `<!${client.user.id}>`) return;
+		if (args[0] != `<@${client.user.id}>`) return;
 		si.cpu()
     	.then(cpu => {
 			si.mem()
